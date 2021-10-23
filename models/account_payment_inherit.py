@@ -7,12 +7,9 @@ from odoo import models, fields, api, _
 class AccountPayment(models.Model):
     _inherit = "account.payment"
 
-    # state = fields.Selection(selection_add=[
-    #     ('checks', 'Check Received'),
-    #     ('under_collected', 'Under Collection/Payment')], ondelete={'checks': 'set default', 'under_collected': 'set default'})
-    state = fields.Selection(
-        [('draft', 'Draft'), ('posted', 'Validated'), ('sent', 'Sent'), ('reconciled', 'Reconciled'),
-         ('cancelled', 'Cancelled'), ('checks', 'Check Received'), ('under_collected', 'Under Collection/Payment')], readonly=True, default='draft', copy=False, string="Status")
+    state = fields.Selection(selection_add=[
+        ('checks', 'Check Received'),
+        ('under_collected', 'Under Collection/Payment')],)
     payment_ref = fields.Char(string='Payment Ref', copy=False)
     first_user_id = fields.Many2one('res.users', string='Users')
     first_move_line = fields.Many2one('account.move.line')
