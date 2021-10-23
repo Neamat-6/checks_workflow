@@ -7,9 +7,9 @@ from odoo import models, fields, api, _
 class AccountPayment(models.Model):
     _inherit = "account.payment"
 
-    state = fields.Selection(selection_add=[
-        ('checks', 'Check Received'),
-        ('under_collected', 'Under Collection/Payment')], ondelete={'checks': 'set default', 'under_collected': 'set default'})
+    # state = fields.Selection(selection_add=[
+    #     ('checks', 'Check Received'),
+    #     ('under_collected', 'Under Collection/Payment')], ondelete={'checks': 'set default', 'under_collected': 'set default'})
     payment_ref = fields.Char(string='Payment Ref', copy=False)
     first_user_id = fields.Many2one('res.users', string='Users')
     first_move_line = fields.Many2one('account.move.line')
@@ -24,8 +24,8 @@ class AccountPayment(models.Model):
     effective_date = fields.Date(string='Effective Date', copy=False)
     under_collection_date = fields.Date(string='Under Collection Date', copy=False)
     cancellation_reason = fields.Text(string="Cancellation Reason")
-    show_under_collect_button = fields.Boolean(string='Show Under Collect', compute='get_under_collect_button')
-    show_validate_check_button = fields.Boolean(string='Show Collect', compute='get_validate_check_button')
+    # show_under_collect_button = fields.Boolean(string='Show Under Collect', compute='get_under_collect_button')
+    # show_validate_check_button = fields.Boolean(string='Show Collect', compute='get_validate_check_button')
 
     _sql_constraints = [('payment_ref_uniq', 'unique (payment_ref)', 'The Name of Payment Ref must be unique !'), ]
 
@@ -454,33 +454,33 @@ class AccountPayment(models.Model):
     #             for line in reverted_payment_move.line_ids:
     #                 line.payment_id = record.id
     #
-    # def check_under_collection_action(self):
-    #     for rec in self:
-    #         if rec.state == 'checks' and rec.check_printing_payment_method_selected == True:
-    #             rec.under_collected()
-    #         else:
-    #             raise ValidationError(
-    #                 _(
-    #                     'Only Check Received payment can be Under Collected. Trying to confirm a payment in state draft.'))
-    #
-    # def validate_check_action(self):
-    #     for rec in self:
-    #         if rec.state == 'under_collected' and rec.check_printing_payment_method_selected == True:
-    #             rec.validate_check()
-    #         else:
-    #             raise ValidationError(_(
-    #                 'Only Under Collected payment can be Validated. Trying to under collect a payment in check received.'))
-    #
-    # def check_rollback_action(self):
-    #     for rec in self:
-    #         if rec.state != 'draft' and rec.check_printing_payment_method_selected == True:
-    #             rec.roll_back()
-    #         else:
-    #             raise ValidationError(_('You can not make Check Rollback in Draft state .'))
-    #
-    # def check_cancel_action(self):
-    #     for rec in self:
-    #         if rec.state != 'draft' and rec.check_printing_payment_method_selected == True:
-    #             rec.check_cancel()
-    #         else:
-    #             raise ValidationError(_('You can not make Check Cancel in Draft state .'))
+    def check_under_collection_action(self):
+        for rec in self:
+            if rec.state == 'checks' and rec.check_printing_payment_method_selected == True:
+                rec.under_collected()
+            else:
+                raise ValidationError(
+                    _(
+                        'Only Check Received payment can be Under Collected. Trying to confirm a payment in state draft.'))
+
+    def validate_check_action(self):
+        for rec in self:
+            if rec.state == 'under_collected' and rec.check_printing_payment_method_selected == True:
+                rec.validate_check()
+            else:
+                raise ValidationError(_(
+                    'Only Under Collected payment can be Validated. Trying to under collect a payment in check received.'))
+
+    def check_rollback_action(self):
+        for rec in self:
+            if rec.state != 'draft' and rec.check_printing_payment_method_selected == True:
+                rec.roll_back()
+            else:
+                raise ValidationError(_('You can not make Check Rollback in Draft state .'))
+
+    def check_cancel_action(self):
+        for rec in self:
+            if rec.state != 'draft' and rec.check_printing_payment_method_selected == True:
+                rec.check_cancel()
+            else:
+                raise ValidationError(_('You can not make Check Cancel in Draft state .'))
