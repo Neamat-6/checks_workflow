@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_journal_form_inherit" model="ir.ui.view">
+            <field name="name">account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Checks Workflow"
+                          attrs="{'invisible': ['|',('check_printing_payment_method_selected', '=', False),('type', '!=', 'bank')]}">
+                        <group>
+                            <group>
+                                <field name="under_collected_id"
+                                       attrs="{'required':[('check_printing_payment_method_selected','=',True),('type', '=', 'bank')]}"/>
+                                <field name="under_payment_id"
+                                       attrs="{'required':[('check_printing_payment_method_selected','=',True),('type', '=', 'bank')]}"/>
+
+                                <field name="no_of_steps_in_vendor_checks"
+                                       attrs="{'required':[('check_printing_payment_method_selected','=',True),('type', '=', 'bank')]}"/>
+                            </group>
+                            <group>
+                                <field name="note_id"
+                                       attrs="{'required':[('check_printing_payment_method_selected','=',True),('type', '=', 'bank')]}"/>
+                                <field name="note_payable_id"
+                                       attrs="{'required':[('check_printing_payment_method_selected','=',True),('type', '=', 'bank')]}"/>
+                                <field name="auto_post_entries"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

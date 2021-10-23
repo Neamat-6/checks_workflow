@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_payment_tree_check_inherit" model="ir.ui.view">
+            <field name="name">view.account.payment.tree.check.inherit</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_method_id']" position="after">
+                    <field name="due_date"/>
+                    <field name="effective_date"/>
+                    <field name="check_no"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_payment_search_view" model="ir.ui.view">
+            <field name="name">account.payment.search.view</field>
+            <field name="model">account.payment</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="check_no"/>
+                    <field name="due_date"/>
+                    <field name="payment_ref"/>
+                    <field name="effective_date"/>
+                    <field name="name"
+                           filter_domain="['|', ('name','ilike',self), ('communication','ilike',self)]"
+                           string="Description"/>
+                    <separator/>
+                    <field name="partner_id"/>
+                    <field name="journal_id"/>
+                    <field name="company_id"
+                           groups="base.group_multi_company"/>
+                    <filter string="Vendor Payments"
+                            domain="[('payment_type','=','outbound')]"
+                            name="outbound_filter"/>
+                    <filter string="Customer Payments"
+                            domain="[('payment_type','=','inbound')]"
+                            name="inbound_filter"/>
+                    <filter string="Transfers"
+                            domain="[('payment_type','=','transfer')]"
+                            name="transfers_filter"/>
+                    <separator/>
+                    <filter string="Draft"
+                            domain="[('state','=','draft')]"
+                            name="state_draft"/>
+                    <filter string="Checks Received"
+                            domain="[('state','=','checks')]"
+                            name="state_checks"/>
+                    <filter string="Under Collection/Payment"
+                            domain="[('state','=','under_collected')]"
+                            name="state_under_collected"/>
+                    <filter string="Posted"
+                            domain="[('state','=','posted')]"
+                            name="state_posted"/>
+                    <filter string="Sent"
+                            domain="[('state','=','sent')]"
+                            name="state_sent"/>
+                    <filter string="Reconciled"
+                            name="reconciled"
+                            domain="[('state','=','reconciled')]"/>
+                    <separator/>
+                    <filter string="Partner"
+                            name="partner"
+                            domain="[]"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter string="Journal"
+                            name="journal"
+                            domain="[]"
+                            context="{'group_by': 'journal_id'}"/>
+                    <filter string="Payment Method"
+                            name="paymentmethod"
+                            domain="[]"
+                            context="{'group_by': 'payment_method_id'}"/>
+                    <filter string="State"
+                            name="group_by_state"
+                            domain="[]"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Currency"
+                            name="currency"
+                            domain="[]"
+                            context="{'group_by': 'currency_id'}"
+                            groups="base.group_multi_currency"/>
+                    <filter string="Company"
+                            name="company"
+                            domain="[]"
+                            context="{'group_by': 'company_id'}"
+                            groups="base.group_multi_company"
+                            invisible="1"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="view_account_supplier_payment_tree_check_inherit" model="ir.ui.view">
+            <field name="name">view.account.supplier.payment.tree.check.inherit</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_supplier_payment_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_method_id']" position="before">
+                    <field name="due_date"/>
+                    <field name="effective_date"/>
+                    <field name="check_no"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_check_under_payment_tree" model="ir.ui.view">
+            <field name="name">account.payment.tree</field>
+            <field name="model">account.payment</field>
+            <field name="priority" eval="15"/>
+            <field name="arch" type="xml">
+                <tree create="false" import="false">
+                    <field name="payment_type"/>
+                    <field name="payment_ref" string="CHQ NO"/>
+                    <field name="partner_id" string="NAME"/>
+                    <field name="amount" string="AMOUNT" sum="Total amount"/>
+                    <field name="payment_date" string="DUE DATE"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_check_under_collection" model="ir.actions.act_window">
+            <field name="name">Payment Check</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_check_under_payment_tree"/>
+            <field name="search_view_id" ref="account_payment_search_view"/>
+            <field name="context">{'search_default_group_by_state':1}</field>
+            <field name="domain">[('check_printing_payment_method_selected','=',True),('journal_id.type','=','bank')]
+            </field>
+        </record>
+
+        <record id="view_account_payment_ref_form_inherit" model="ir.ui.view">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_date']" position="before">
+                    <field name="check_printing_payment_method_selected" invisible="1"/>
+                    <field name="check_no"
+                           attrs="{'readonly': [('state','not in',['draft','checks'])],'invisible': [('check_printing_payment_method_selected','=',False)]}"/>
+                    <field name="payment_ref"
+                           attrs="{'readonly': [('state','not in',['draft','checks'])],'required':[('check_printing_payment_method_selected','=',True)]}"/>
+                    <field name="due_date"
+                           attrs="{'readonly': [('state','not in',['draft','checks'])],'invisible': [('check_printing_payment_method_selected','!=',True)]}"/>
+
+                    <field name="effective_date"
+                           attrs="{'readonly': [('state','not in',['draft','checks'])],'invisible': [('check_printing_payment_method_selected','=',False)]}"/>
+
+                    <field name="under_collection_date"
+                           attrs="{'readonly': [('state','not in',['draft','checks','under_collected'])],'invisible': ['|',('state','!=','under_collected'),('check_printing_payment_method_selected','=',False)]}"/>
+
+
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_payment_checks_form_view" model="ir.ui.view">
+            <field name="name">account.payment.checks.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="attributes">
+                    <attribute name="statusbar_visible">draft</attribute>
+                </xpath>
+
+                <xpath expr="//header" position="inside">
+                    <field name="show_under_collect_button" invisible="1"/>
+                    <field name="show_validate_check_button" invisible="1"/>
+
+                    <button name="under_collected" type="object" string="Under Collection/Payment"
+                            attrs="{'invisible': [('show_under_collect_button', '=', False)]}" class="oe_highlight"
+                    />
+                    <button name="validate_check" type="object" string="Validate" class="oe_highlight"
+                            attrs="{'invisible': [('show_validate_check_button', '=', False)]}"/>
+
+                    <button name="roll_back"
+                            type="object"
+                            string="Rollback"
+                            class="oe_highlight"
+                            attrs="{'invisible': ['|',('state', 'in', ['draft','cancel']), ('check_printing_payment_method_selected','!=',True)]}"/>
+                    <button name="%(checks_workflow.cancel_payment_form_form_action)d" type="action"
+                            string="Cancel" class="oe_highlight"
+                            attrs="{'invisible': ['|',('state', 'in', ['draft','cancel']), ('check_printing_payment_method_selected','!=',True)]}"/>
+                </xpath>
+                <field name="payment_date" position="after">
+                    <field name="check_no"
+                           attrs="{'readonly': [('state','not in',['draft','checks'])],'invisible': [('check_printing_payment_method_selected','=',False)]}"/>
+                    <field name="check_printing_payment_method_selected" invisible="1"/>
+
+                    <field name="payment_ref"
+                           attrs="{'readonly': [('state','not in',['draft','checks'])],'required':[('check_printing_payment_method_selected','=',True)]}"/>
+                    <field name="cancellation_date" readonly="1"
+                           attrs="{'invisible': [('state','!=','cancel')],'required':[('state','=','cancel')]}"/>
+
+                    <field name="cancellation_reason"
+                           attrs="{'readonly': [('state', '=', 'cancel')],'invisible': [('check_printing_payment_method_selected','=',False)]}"/>
+                    <field name="due_date"
+                           attrs="{'readonly': [('state','not in',['draft','checks'])],'invisible': [('check_printing_payment_method_selected','!=',True)]}"/>
+
+                    <field name="effective_date"
+                           attrs="{'readonly': [('state','not in',['draft','checks'])],'invisible': [('check_printing_payment_method_selected','=',False)]}"/>
+
+                    <field name="under_collection_date"
+                           attrs="{'readonly': [('state','not in',['draft','checks','under_collected'])],'invisible': ['|',('state','!=','under_collected'),('check_printing_payment_method_selected','=',False)]}"/>
+
+
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>

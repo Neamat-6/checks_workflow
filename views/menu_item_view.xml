@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+
+        <menuitem id="menu_check_payment"
+                  name="Payment check"
+                  parent="account.menu_finance_reports"/>
+
+        <menuitem id="menu_check_under_collection"
+                  name="Payment Check"
+                  parent="menu_check_payment"
+                  action="action_check_under_collection"/>
+
+    </data>
+</odoo>

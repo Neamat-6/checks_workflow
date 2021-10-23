@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <record id="action_account_under_collected" model="ir.actions.server">
+            <field name="name">Check Under Collection/Payment</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="account.model_account_payment"/>
+            <field name="binding_model_id" ref="account.model_account_payment"/>
+            <field name="code">
+                records.check_under_collection_action()
+            </field>
+        </record>
+
+
+        <record id="action_validate_under_collected" model="ir.actions.server">
+            <field name="name">Check Validate</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="account.model_account_payment"/>
+            <field name="binding_model_id" ref="account.model_account_payment"/>
+            <field name="code">
+                records.validate_check_action()
+            </field>
+        </record>
+
+
+        <record id="action_rollback_under_collected" model="ir.actions.server">
+            <field name="name">Check Rollback</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="account.model_account_payment"/>
+            <field name="binding_model_id" ref="account.model_account_payment"/>
+            <field name="code">
+                records.check_rollback_action()
+            </field>
+        </record>
+
+
+        <record id="action_cancel_under_collected" model="ir.actions.server">
+            <field name="name">Check Cancel</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="account.model_account_payment"/>
+            <field name="binding_model_id" ref="account.model_account_payment"/>
+            <field name="code">
+                records.check_cancel_action()
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
