@@ -181,9 +181,9 @@
                             string="Rollback"
                             class="oe_highlight"
                             attrs="{'invisible': ['|',('state', 'in', ['draft','cancel']), ('check_printing_payment_method_selected','!=',True)]}"/>
-<!--                    <button name="%(checks_workflow.cancel_payment_form_form_action)d" type="action"-->
-<!--                            string="Cancel" class="oe_highlight"-->
-<!--                            attrs="{'invisible': ['|',('state', 'in', ['draft','cancel']), ('check_printing_payment_method_selected','!=',True)]}"/>-->
+                    <button name="%(checks_workflow.cancel_payment_form_form_action)d" type="action"
+                            string="Cancel" class="oe_highlight"
+                            attrs="{'invisible': ['|',('state', 'in', ['draft','cancel']), ('check_printing_payment_method_selected','!=',True)]}"/>
                 </xpath>
                 <field name="payment_date" position="after">
                     <field name="check_no"

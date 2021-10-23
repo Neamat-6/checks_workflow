@@ -27,7 +27,7 @@ class AccountPayment(models.Model):
     show_under_collect_button = fields.Boolean(string='Show Under Collect', compute='get_under_collect_button')
     show_validate_check_button = fields.Boolean(string='Show Collect', compute='get_validate_check_button')
 
-    _sql_constraints = [('payment_ref_uniq', 'unique (payment_ref)', 'The Name of Payment Ref must be unique !'), ]
+    # _sql_constraints = [('payment_ref_uniq', 'unique (payment_ref)', 'The Name of Payment Ref must be unique !'), ]
 
     @api.depends('state', 'partner_type', 'journal_id')
     def get_under_collect_button(self):
